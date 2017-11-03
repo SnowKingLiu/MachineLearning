@@ -180,8 +180,8 @@ def handwriting_class_test():
         print "分类的结果是：%d，真实的类别是：%d" % (classifier_result, class_num_str)
         if classifier_result != class_num_str:
             error_count += 1.0
-        print "错误分类的数量是：%d" % error_count
-        print "错误率是：%f" % (error_count / float(m_test))
+    print "错误分类的数量是：%d" % error_count
+    print "错误率是：%f" % (error_count / float(m_test))
 
 
 if __name__ == '__main__':
