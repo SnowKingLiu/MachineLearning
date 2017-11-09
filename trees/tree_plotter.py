@@ -36,7 +36,7 @@ def get_num_leafs(my_tree):
     num_leafs = 0
     first_str = my_tree.keys()[0]
     second_dic = my_tree[first_str]
-    for key in second_dic.key():
+    for key in second_dic.keys():
         if type(second_dic[key]).__name__ == 'dict':
             num_leafs += get_num_leafs(second_dic[key])
         else:
@@ -53,7 +53,7 @@ def get_tree_depth(my_tree):
     max_depth = 0
     first_str = my_tree.keys()[0]
     second_dict = my_tree[first_str]
-    for key in second_dict.key():
+    for key in second_dict.keys():
         if type(second_dict[key]).__name__ == 'dict':
             this_depth = 1 + get_tree_depth(second_dict[key])
         else:
@@ -63,7 +63,82 @@ def get_tree_depth(my_tree):
     return max_depth
 
 
+def retrieve_tree(i):
+    list_of_trees = [
+        {
+            'no surfacing': {
+                0: 'no',
+                1: {
+                    'flippers': {
+                        0: 'no',
+                        1: 'yes'
+                    }
+                }
+            }
+        },
+        {
+            'no surfacing': {
+                0: 'no',
+                1: {
+                    'flippers': {
+                        0: {
+                            'head': {
+                                0: 'no',
+                                1: 'yes'
+                            }
+                        },
+                        1: 'no'
+                    }
+                }
+            }
+        }
+    ]
+    return list_of_trees[i]
+
+
+def plot_mid_text(children_pt, parent_pt, txt_string):
+    x_mid = (parent_pt[0] - children_pt[0])/2.0 + children_pt[0]
+    y_mid = (parent_pt[1] - children_pt[1])/2.0 + children_pt[1]
+    create_plot.ax1.text(x_mid, y_mid, txt_string)
+
+
+def plot_tree(my_tree, parent_pt, node_txt):
+    num_leafs = get_num_leafs(my_tree)
+    depth = get_tree_depth(my_tree)
+    first_str = my_tree.keys()[0]
+    children_pt = (plot_tree.x_off + (1.0 + float(num_leafs))/2.0/plot_tree.total_w, plot_tree.y_off)
+    plot_mid_text(children_pt, parent_pt, node_txt)
+    plot_node(first_str, children_pt, parent_pt, decision_node)
+    second_dict = my_tree[first_str]
+    plot_tree.y_off = plot_tree.y_off - 1.0/plot_tree.total_d
+    for key in second_dict.keys():
+        if type(second_dict[key]).__name__ == 'dict':
+            plot_tree(second_dict[key], children_pt, str(key))
+        else:
+            plot_tree.x_off = plot_tree.x_off + 1.0/plot_tree.total_w
+            plot_node(second_dict[key], (plot_tree.x_off, plot_tree.y_off), children_pt, leaf_node)
+            plot_mid_text((plot_tree.x_off, plot_tree.y_off), children_pt, str(key))
+        plot_tree.y_off = plot_tree.y_off + 1.0/plot_tree.total_d
+
+
+def create_plot(in_tree):
+    fig = plt.figure(1, facecolor='white')
+    fig.clf()
+    axprops = dict(xticks=[], yticks=[])
+    create_plot.ax1 = plt.subplot(111, frameon=False, **axprops)
+    plot_tree.total_w = float(get_num_leafs(in_tree))
+    plot_tree.total_d = float(get_tree_depth(in_tree))
+    plot_tree.x_off = -0.5/plot_tree.total_w
+    plot_tree.y_off = 1.0
+    plot_tree(in_tree, (0.5, 1.0), '')
+    plt.show()
+
+
 if __name__ == '__main__':
-    create_plot()
+    # create_plot()
     # import treePlotter
     # treePlotter.createPlot0()
+    my_tree = retrieve_tree(1)
+    # print get_num_leafs(my_tree)
+    # print get_tree_depth(my_tree)
+    create_plot(my_tree)

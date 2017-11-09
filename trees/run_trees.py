@@ -4,6 +4,7 @@
 
 from math import log
 import operator
+import tree_plotter
 
 
 def calc_shannon_ent(data_set):
@@ -41,7 +42,7 @@ def create_data_set():
                 [1, 0, 'no'],
                 [0, 1, 'no'],
                 [0, 1, 'no']]
-    labels = ['不浮出水面可生存否', '有脚蹼否']
+    labels = ['no surfacing', 'flippers']
     return data_set, labels
 
 
@@ -141,6 +142,19 @@ def create_tree(data_set, labels):
     return my_tree
 
 
+def classify(input_tree, feat_labels, test_vec):
+    first_str = input_tree.keys()[0]
+    second_dic = input_tree[first_str]
+    feat_index = feat_labels.index(first_str)
+    for key in second_dic.keys():
+        if test_vec[feat_index] == key:
+            if type(second_dic[key]).__name__ == "dict":
+                class_label = classify(second_dic[key], feat_labels, test_vec)
+            else:
+                class_label = second_dic[key]
+    return class_label
+
+
 if __name__ == '__main__':
     my_data_set, my_labels = create_data_set()
     # print my_data_set
@@ -148,4 +162,6 @@ if __name__ == '__main__':
     # print split_data_set(my_data_set, 0, 1)
     # print choose_best_fearure_to_split(my_data_set)
     print create_tree(my_data_set, my_labels)
-
+    my_tree = tree_plotter.retrieve_tree(0)
+    print classify(my_tree, my_labels, [1, 0])
+    print classify(my_tree, my_labels, [1, 1])
