@@ -22,9 +22,45 @@ def create_plot():
     # plot_node('a decision node', (0.5, 0.1), (0.1, 0.5), decision_node)
     # plot_node('a decision node', (0.5, 0.1), (0.1, 0.5), decision_node)
     # plot_node('a leaf node', (0.8, 0.1), (0.3, 0.8), leaf_node)
-    plot_node(u'关键节点', (0.5, 0.1), (0.1, 0.5), decision_node)
+    plot_node(u'决策节点', (0.5, 0.1), (0.1, 0.5), decision_node)
     plot_node(u'叶子节点', (0.8, 0.1), (0.3, 0.8), leaf_node)
     plt.show()
+
+
+def get_num_leafs(my_tree):
+    """
+    获取叶子节点的个数
+    :param my_tree:
+    :return:
+    """
+    num_leafs = 0
+    first_str = my_tree.keys()[0]
+    second_dic = my_tree[first_str]
+    for key in second_dic.key():
+        if type(second_dic[key]).__name__ == 'dict':
+            num_leafs += get_num_leafs(second_dic[key])
+        else:
+            num_leafs += 1
+    return num_leafs
+
+
+def get_tree_depth(my_tree):
+    """
+    获取树的深度
+    :param my_tree:
+    :return:
+    """
+    max_depth = 0
+    first_str = my_tree.keys()[0]
+    second_dict = my_tree[first_str]
+    for key in second_dict.key():
+        if type(second_dict[key]).__name__ == 'dict':
+            this_depth = 1 + get_tree_depth(second_dict[key])
+        else:
+            this_depth = 1
+        if this_depth > max_depth:
+            max_depth = this_depth
+    return max_depth
 
 
 if __name__ == '__main__':
