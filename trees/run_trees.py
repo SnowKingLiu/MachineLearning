@@ -143,6 +143,7 @@ def create_tree(data_set, labels):
 
 
 def classify(input_tree, feat_labels, test_vec):
+    global class_label
     first_str = input_tree.keys()[0]
     second_dic = input_tree[first_str]
     feat_index = feat_labels.index(first_str)
